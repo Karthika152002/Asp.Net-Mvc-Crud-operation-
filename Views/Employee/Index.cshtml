@@ -1,0 +1,146 @@
+﻿@model IPagedList<MVCCRDU.Models.Employees>
+@using PagedList;
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+
+</p>
+
+@using (Html.BeginForm("Index", "Employee", FormMethod.Get))
+
+{
+    <p>
+        @Html.TextBox("Search")
+        <input type="Submit" value="Search" class="btn btn-default" />
+    </p>
+
+}
+
+<!-- The Modal -->
+<div class="modal" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Modal Heading</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+
+               <p id="modalcontent"></p>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+
+
+</div>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Name)
+
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Age)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Address)
+
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.First().Gender)
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.DeptId)
+        </th>*@
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Age)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gender)
+            </td>
+            @*<td>
+            @Html.DisplayFor(modelItem => item.DeptId)
+        </td>*@
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-primary" })
+                @*@Html.ActionLink("Details", "Details", new { id=item.EmpID }, new { @class = "btn btn-danger" })*@
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger" })
+                <a href="#" class="details btn btn-primary" data-id="@item.Id">Details</a>
+            </td>
+        </tr>
+    }
+
+</table>
+@Html.PagedListPager(Model,Page => Url.Action("Index", new {Page}))
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $('.details').click(function () {
+
+                var buttonClicked = $(this);
+                var id = buttonClicked.attr('data-id');
+
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("Details", "Employee")',
+
+
+                    data: { "Id": id },
+                    dataType: 'HTML',
+                    contentType: 'application/html',
+                    success: function (data) {
+                        $('#myModal').modal('show');
+                        $('#modalcontent').html(data);
+
+                    },
+                    error: function (response) {
+                        console.log("ERROR");
+                    }
+
+                });
+
+
+
+            });
+
+
+        });
+
+
+    </script>
+}
